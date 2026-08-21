@@ -1,0 +1,8 @@
+# The dsh-gomoku-local bundle patch: activates the plugin as a profile layer.
+# The single row covers both halves of this package: the node half runs in
+# the host (a no-op), and the browser half (lib/client.js) ships in the same
+# package, loading under this same id through the dsh.client declaration in
+# package.json.
+- insert:
+    - id: gomoku-local
+      name: 'dsh-gomoku-local'
