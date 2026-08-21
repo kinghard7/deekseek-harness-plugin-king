@@ -1,0 +1,6 @@
+# The dsh-novel-reader bundle patch: activates the plugin as a profile layer.
+# One row covers both halves: the node half proxies novel search/fetch over
+# same-origin HTTP routes; the browser half renders the reader UI.
+- insert:
+    - id: novel-reader
+      name: 'dsh-novel-reader'

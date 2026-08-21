@@ -1,0 +1,24 @@
+{
+  "name": "dsh-novel-reader",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Novel reader for the dsh web GUI: online search via configurable sources, txt import/download, paginated reading with fully customizable hotkeys.",
+  "main": "lib/index.js",
+  "exports": {
+    ".": { "default": "./lib/index.js" },
+    "./client": { "default": "./lib/client.js" },
+    "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml"
+  },
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  }
+}
