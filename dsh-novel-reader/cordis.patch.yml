@@ -3,4 +3,4 @@
 # same-origin HTTP routes; the browser half renders the reader UI.
 - insert:
     - id: novel-reader
-      name: 'dsh-novel-reader'
+      name: '@kingkk/dsh-novel-reader'

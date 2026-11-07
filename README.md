@@ -42,24 +42,57 @@
 
 ## 安装
 
-两个插件都是标准的 dsh bundle 包（含 `cordis.patch.yml`）。以本地 link 方式装进 web profile 即可，例如在 profile 的 `package.json` 中：
+### 方式一：本地 link（当前可用，开发调试）
+
+> 目前两个包**尚未发布到 npm**（`npm view dsh-gomoku-local` / `@kingkk/dsh-novel-reader` 均 404），所以现在只能用本地 link 安装。
+> `dsh-novel-reader` 这个裸包名在 npm 上已被他人占用，发布时阅读器会使用 scope 包名 `@kingkk/dsh-novel-reader`，与本地目录对应。
+
+一条命令装进 web profile（`dsh plugin add` 会自动把声明了 `dsh.bundle` 的包写进 `dsh.profile.bundles`）：
+
+```bash
+dsh plugin --profile web add link:/path/to/deekseek-harness-plugin-king/dsh-gomoku-local
+dsh plugin --profile web add link:/path/to/deekseek-harness-plugin-king/dsh-novel-reader
+```
+
+也可以直接编辑 `~/.dsh/profiles/web/package.json`：
 
 ```json
 {
   "dependencies": {
     "dsh-gomoku-local": "link:/path/to/deekseek-harness-plugin-king/dsh-gomoku-local",
-    "dsh-novel-reader": "link:/path/to/deekseek-harness-plugin-king/dsh-novel-reader"
+    "@kingkk/dsh-novel-reader": "link:/path/to/deekseek-harness-plugin-king/dsh-novel-reader"
   },
   "dsh": {
     "profile": {
-      "bundles": ["dsh-gomoku-local", "dsh-novel-reader"]
+      "bundles": ["dsh-gomoku-local", "@kingkk/dsh-novel-reader"]
     }
   }
 }
 ```
 
-安装后重启 dsh web，进入任意会话即可在头部看到「五子棋」「阅读」两个按钮。
+`bundles` 里写的名字必须与各包 `package.json` 的 `name` **完全一致**（阅读器是 `@kingkk/dsh-novel-reader`），否则组合行会指向一个不存在的包。改完后 `pnpm install`，刷新浏览器；`patchReload: live` 的 profile 由插件管理安装时会直接热应用，手工改文件则需要重启 `dsh web`。
+
+## 加载排查
+
+"装了插件但界面没出现按钮"时，按这个顺序查：
+
+1. **先确认行已激活**：`~/.dsh/profiles/web/package.json` 的 `dependencies` 和 `dsh.profile.bundles` 里都有插件名；`dsh --profile web --dump-config` 的输出里能找到对应的 `name`。
+2. **再确认浏览器 bundle 进了启动图谱**：刷新页面，在页面源码里搜 `__DSH_BOOT__`，`entries` 里应有 `dsh-gomoku-local` 和 `@kingkk/dsh-novel-reader`。
+3. **包名三处必须一致**：`package.json` 的 `name`、`cordis.patch.yml` 里 `insert` 行的 `name`、`lib/client.js` 里 `window.__ModuleLoader__.load({ id })` 的 `id`。scoped 包（如 `@kingkk/dsh-novel-reader`）三处都要带 scope——只改 package.json 不改另外两处时，行会解析不到包，或 bundle 注册的 id 与图谱行 id 不匹配，浏览器端会报 `bundle ... loaded without registering ...`。
+4. **位置**：按钮注册在 `conversation.session.header.actions`，只有会话头部会渲染；工作区落地页（"探索未至之境"）没有这个 slot。
+5. **改完 `lib/client.js` 后**：client-modules/HMR 会按文件 mtime 重新打包并推送，通常刷新即可；改 `package.json` / `cordis.patch.yml`（行结构变化）需要重启 `dsh web`。
 
 ## 截图说明
 
 `screenshots/` 下的图片为实际运行截图（headless Chrome 驱动本机 dsh web GUI 拍摄，2x 缩放）。
+
+## 发布（维护者）
+
+```bash
+npm login --registry=https://registry.npmjs.org   # 首次：登录 npm 官方源（镜像源不能发布）
+./scripts/publish.sh --dry-run                    # 验证打包内容，不发布
+./scripts/publish.sh                              # 交互式逐个发布
+./scripts/publish.sh dsh-gomoku-local             # 只发某一个
+```
+
+脚本会检查登录态、`private` 标记、npm 上是否已存在该版本，并展示每个包的实际文件清单后才请求确认。发新版前记得在对应插件目录执行 `npm version patch`  bump 版本号。

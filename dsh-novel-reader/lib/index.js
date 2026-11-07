@@ -325,7 +325,7 @@ function mountRoutes(host) {
   return () => { for (const dispose of disposers) dispose() }
 }
 
-export const name = 'dsh-novel-reader'
+export const name = '@kingkk/dsh-novel-reader'
 export function apply(ctx) {
   ctx.inject(['webServer', 'loader'], (host) => {
     host.effect(() => mountRoutes(host), 'dsh-novel-reader: http routes')

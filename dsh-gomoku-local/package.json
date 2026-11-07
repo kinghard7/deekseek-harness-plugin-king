@@ -2,7 +2,14 @@
   "name": "dsh-gomoku-local",
   "description": "Local Gomoku (five-in-a-row) for the dsh web GUI: pure in-browser play, human vs human or vs a built-in heuristic engine - no LLM calls, no tokens.",
   "version": "0.1.0",
-  "private": true,
+  "license": "MIT",
+  "keywords": ["dsh", "dsh-plugin", "gomoku", "five-in-a-row", "五子棋"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kinghard7/deekseek-harness-plugin-king.git",
+    "directory": "dsh-gomoku-local"
+  },
+  "files": ["lib", "cordis.patch.yml"],
   "type": "module",
   "main": "lib/index.js",
   "exports": {
@@ -16,7 +23,6 @@
     "client": {
       "platform": "web",
       "inject": [
-        "@deepseek-ai/dsh-client-runtime",
         "@deepseek-ai/dsh-client-ui-conversation"
       ]
     }

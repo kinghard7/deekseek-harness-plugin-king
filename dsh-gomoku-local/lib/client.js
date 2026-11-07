@@ -9,6 +9,7 @@ window.__ModuleLoader__.load({
 		var module = { exports: {} };
 		var exports = module.exports;
 		var React = require("react");
+		var ReactDOM = require("react-dom");
 		var h = React.createElement;
 
 		var SIZE = 15;
@@ -319,7 +320,7 @@ window.__ModuleLoader__.load({
 					title: "五子棋",
 					onClick: function () { setOpen(!open); }
 				}, "五子棋"),
-				open ? h("div", { className: "gl-panel" },
+				open ? ReactDOM.createPortal(h("div", { className: "gl-panel" },
 					h("div", { className: "gl-panel-head" },
 						h("span", { className: "gl-panel-title" }, "五子棋 · 本地对弈"),
 						h("button", {
@@ -327,7 +328,7 @@ window.__ModuleLoader__.load({
 							title: "关闭",
 							onClick: function () { setOpen(false); }
 						}, "×")),
-					h(GomokuGame)) : null);
+					h(GomokuGame)), document.body) : null);
 		}
 
 		function apply(ctx) {

@@ -6,11 +6,12 @@
  * purely local. No LLM involvement.
  */
 window.__ModuleLoader__.load({
-	id: "dsh-novel-reader",
+	id: "@kingkk/dsh-novel-reader",
 	factory: function (require) {
 		var module = { exports: {} };
 		var exports = module.exports;
 		var React = require("react");
+		var ReactDOM = require("react-dom");
 		var h = React.createElement;
 
 		// ── constants ──────────────────────────────────────────────────────
@@ -585,12 +586,12 @@ window.__ModuleLoader__.load({
 					title: "小说阅读器（" + comboDisplay(settings.hotkeys.toggle) + "）",
 					onClick: function () { setOpen(!open); }
 				}, "阅读"),
-				open ? h(ReaderPanel, {
+				open ? ReactDOM.createPortal(h(ReaderPanel, {
 					settings: settings,
 					onHotkey: onHotkey,
 					onSetting: onSetting,
 					onClose: function () { setOpen(false); }
-				}) : null);
+				}), document.body) : null);
 		}
 
 		// ── apply ──────────────────────────────────────────────────────────
@@ -611,7 +612,7 @@ window.__ModuleLoader__.load({
 
 		exports.apply = apply;
 		exports.inject = ["slots"];
-		exports.name = "dsh-novel-reader";
+		exports.name = "@kingkk/dsh-novel-reader";
 		return module.exports;
 	}
 });
